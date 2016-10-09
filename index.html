@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style>
+			#div1{
+				position: absolute;
+				width: 100px;
+				height: 100px;
+				background: red;
+			}
+		</style>
+		<script>
+			window.onload=function(){
+				var odiv1=document.getElementById("div1");
+				odiv1.onmousedown=function(ev){
+					var oEvent=ev||event;
+					var posx=oEvent.clientX-odiv1.offsetLeft;
+					var posy=oEvent.clientY-odiv1.offsetTop;
+					
+					//实现鼠标在整个document里面的移动都可以发生div框的移动，
+					//这样鼠标脱离div时，同样会实现div的移动
+					if(odiv1.setCapture){
+						odiv1.onmousemove=mousemove;
+						//同样在整个document里面的鼠标抬起都可以实现鼠标移动事件的释放
+						odiv1.onmouseup=mouseup;
+						//获取捕获(使其他元素的事件都集中到odiv1上，当移动odiv1时从而其他元素不会被选中)
+						  odiv1.setCapture();
+					 }else{
+						document.onmousemove=mousemove;
+						//同样在整个document里面的鼠标抬起都可以实现鼠标移动事件的释放
+						document.onmouseup=mouseup;
+					 }
+					 
+					 //鼠标移动函数
+					 function mousemove(ev){
+							var oEvent=ev||event;
+							//防止拖出页面
+							var l=oEvent.clientX-posx;
+							var t=oEvent.clientY-posy;
+							
+							odiv1.style.left=l+"px";
+							odiv1.style.top=t+"px";
+						}
+					 //鼠标抬起函数
+					 function mouseup(){
+					 	//当鼠标抬起事件发生，则释放鼠标移动事件
+							this.onmousemove=null;
+							//为了不产生多余的垃圾，同时释放鼠标抬起事件
+							this.onmouseup=null;
+							//释放捕获
+							if(this.setCapture){
+							   this.releaseCapture();							
+							}
+					 }
+					 
+					//解决chrome、老版本ff对空div拖拽的一个bug(出现另外一个div影子)
+					return false;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		mkdnnkdefs
+		<div>njdenjdsk</div>
+		<div id="div1"></div>
+		mkmkkk
+	</body>
+</html>
